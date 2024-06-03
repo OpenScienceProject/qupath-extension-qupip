@@ -1,4 +1,7 @@
-package qupath.ext.template;
+package qupath.ext.qupip;
+
+import javafx.scene.layout.VBox;
+import qupath.lib.gui.extensions.QuPathExtension;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -8,13 +11,13 @@ import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import qupath.ext.template.ui.InterfaceController;
+
+import qupath.ext.qupip.ui.InterfaceController;
 import qupath.fx.dialogs.Dialogs;
 import qupath.fx.prefs.controlsfx.PropertyItemBuilder;
 import qupath.lib.common.Version;
 import qupath.lib.gui.QuPathGUI;
 import qupath.lib.gui.extensions.GitHubProject;
-import qupath.lib.gui.extensions.QuPathExtension;
 import qupath.lib.gui.prefs.PathPrefs;
 
 import java.io.IOException;
@@ -32,21 +35,21 @@ import java.io.IOException;
  *     /resources/META-INF/services/qupath.lib.gui.extensions.QuPathExtension
  * </pre>
  */
-public class DemoExtension implements QuPathExtension, GitHubProject {
+public class qupipExtension implements QuPathExtension, GitHubProject {
 	
-	private static final Logger logger = LoggerFactory.getLogger(DemoExtension.class);
+	private static final Logger logger = LoggerFactory.getLogger(qupipExtension.class);
 
 	/**
 	 * Display name for your extension
 	 * TODO: define this
 	 */
-	private static final String EXTENSION_NAME = "My Java extension";
+	private static final String EXTENSION_NAME = "qupath-extension-qupip";
 
 	/**
 	 * Short description, used under 'Extensions > Installed extensions'
 	 * TODO: define this
 	 */
-	private static final String EXTENSION_DESCRIPTION = "This is just a demo to show how extensions work";
+	private static final String EXTENSION_DESCRIPTION = "An extension to add new features to QuPath, inspired by Groovy scripting.";
 
 	/**
 	 * QuPath version that the extension is designed to work with.
@@ -121,8 +124,8 @@ public class DemoExtension implements QuPathExtension, GitHubProject {
 	private void addPreferenceToPane(QuPathGUI qupath) {
 		var propertyItem = new PropertyItemBuilder<>(enableExtensionProperty, Boolean.class)
 				.name("Enable extension")
-				.category("Demo extension")
-				.description("Enable the demo extension")
+				.category("QuPip extension")
+				.description("Enable the QuPip extension(addPreferenceToPane)")
 				.build();
 		qupath.getPreferencePane()
 				.getPropertySheet()
@@ -142,9 +145,9 @@ public class DemoExtension implements QuPathExtension, GitHubProject {
 		qupath.getPreferencePane().addPropertyPreference(
 				enableExtensionProperty,
 				Boolean.class,
-				"Enable my extension",
+				"Enable QuPip extension(addPreference)",
 				EXTENSION_NAME,
-				"Enable my extension");
+				"Enable QuPip extension(addPreference)");
 	}
 
 	/**
@@ -152,21 +155,30 @@ public class DemoExtension implements QuPathExtension, GitHubProject {
 	 * @param qupath
 	 */
 	private void addMenuItem(QuPathGUI qupath) {
-		var menu = qupath.getMenu("Extensions>" + EXTENSION_NAME, true);
-		MenuItem menuItem = new MenuItem("My menu item");
-		menuItem.setOnAction(e -> createStage());
-		menuItem.disableProperty().bind(enableExtensionProperty.not());
-		menu.getItems().add(menuItem);
+		var menuTools = qupath.getMenu("Extensions>" + EXTENSION_NAME + ">Tools", true);
+		var menuPipelines = qupath.getMenu("Extensions>" + EXTENSION_NAME + ">Pipelines", true);
+
+		MenuItem menuInterfaceItem = new MenuItem("Interface");
+		menuInterfaceItem.setOnAction(e -> createStage("interface.fxml"));
+		menuInterfaceItem.disableProperty().bind(enableExtensionProperty.not());
+
+		menuTools.getItems().add(menuInterfaceItem);
+
+		MenuItem menuThresholdItem = new MenuItem("Threshold Tissue");
+		menuThresholdItem.setOnAction(f -> createStage("tissueThreshold.fxml"));
+		menuThresholdItem.disableProperty().bind(enableExtensionProperty.not());
+
+		menuTools.getItems().add(menuThresholdItem);
 	}
 
 	/**
 	 * Demo showing how to create a new stage with a JavaFX FXML interface.
 	 */
-	private void createStage() {
+	private void createStage(String fxmlFile) {
 		if (stage == null) {
 			try {
 				stage = new Stage();
-				Scene scene = new Scene(InterfaceController.createInstance());
+				Scene scene = new Scene(InterfaceController.createInstance(fxmlFile));
 				stage.setScene(scene);
 			} catch (IOException e) {
 				Dialogs.showErrorMessage("Extension Error", "GUI loading failed");

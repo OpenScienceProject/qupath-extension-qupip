@@ -10,14 +10,22 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'src/main/groovy']
+        }
+    }
+}
+
 // TODO: Change the module name
-ext.moduleName = 'io.github.qupath.extension.template'
+ext.moduleName = 'io.github.qupath.extension.qupip'
 
 // TODO: Define the extension name & version, and provide a short description
 base {
     archivesName = rootProject.name
     version = '0.0.1-SNAPSHOT'
-    description = 'A simple QuPath extension template'
+    description = 'An extension to add new features to QuPath, inspired by Groovy scripting.'
 }
 
 // TODO: Specify the QuPath version, compatible with the extension.

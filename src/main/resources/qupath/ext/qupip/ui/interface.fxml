@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 
 <fx:root type="VBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/20" xmlns:fx="http://javafx.com/fxml/1">
-    <Button onAction="#runDemoExtension" text="Run"/>
+    <Button onAction="#runFXML" text="Run"/>
     <Spinner fx:id="threadSpinner" prefWidth="75.0">
         <valueFactory>
             <SpinnerValueFactory.IntegerSpinnerValueFactory max="96" min="1" />
